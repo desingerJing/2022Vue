@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-eq(uiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app">
+        <ul></ul>
+    </div>
+    <input type="text" id="inputByAdd">
+    <button type="button" id="buttonByAdd">新增</button>
+    <script>
+        // 資料
+        const data = [
+            {
+                id: 1,
+                content: '我是卡斯伯'
+            },
+            {
+                id: 2,
+                content: '我是小明'
+            }
+        ];
+
+        // 取得HTML元素
+        const app = document.querySelector('#app ul');
+        const inputByAdd = document.querySelector('#inputByAdd');
+        const buttonByAdd = document.querySelector('#buttonByAdd');
+
+        
+        // 渲染
+        function render() {
+            // 定義一個空值，之後放 li
+            // template 要放在 render() 裡面
+            // 重新渲染的時候，才會清空原本的內容
+            let template = "";
+
+            // 取得 data，並放到 template
+            // 加入刪除功能需要的按鈕  *** 要有 data-id 方便抓取要刪除的位置
+            data.forEach((item, index) => {
+                template += `<li> ${item.id} - ${item.content} | <button id="buttonByDel" type="button" data-id="${item.id}">刪除</button></li>`;
+            });
+            app.innerHTML = template;
+
+
+            //////----- 刪除
+            // 要放在 render() 裡面，才能正常抓到按鈕
+            // 對 buttonByDel forEach，讓每個按鈕都有功能
+            const buttonByDel = document.querySelectorAll('#buttonByDel');   // 複數個按鈕，使用 querySelectorAll
+            buttonByDel.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    // 取得當前按鈕的 data-id
+                    // 將字串轉為數字
+                    let delId = Number.parseInt(e.target.dataset.id);
+                    // 渲染，並帶入 delId
+                    del(delId);
+                });
+            });
+        }
+
+        // 
+        function del(delId){
+            // 尋找與 delId 相同 id 的陣列內容
+            const index = data.findIndex((item)=>{item.id === delId });
+            // 刪除陣列內容
+            data.splice(index,1);
+            // 重新渲染
+            render();
+        }
+        
+        
+
+        //////----- 新增
+        // 取得現在的id長度
+        let newId = data.length;
+        
+        // buttonByAdd 加入事件監聽
+        buttonByAdd.addEventListener('click', function(e){
+            // 抓取內容
+            let content = inputByAdd.value;
+            // id +1
+            newId++;
+            // 清空 input
+            inputByAdd.value = "";
+            // 渲染，並帶入 content
+            add(newId,content);
+        });
+
+        function add(newId,content) {
+            // 將新 id & input 加入 data
+            data.push({
+                id: newId,
+                content
+            });
+            // 添加資料後，重新渲染
+            render();
+        }
+
+
+        
+        // 初次渲染
+        render();
+    </script>
+</body>
+
+</html>
